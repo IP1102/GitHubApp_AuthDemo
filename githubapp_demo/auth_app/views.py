@@ -10,6 +10,8 @@ from .jwtapptoken import GetJwtToken
 def home(request):
     try:
         code = request.GET.get('code')
+        install_id=request.GET.get('installation_id')
+        print(install_id)
         headers={
             'accept':'application/json'
         }
@@ -19,7 +21,7 @@ def home(request):
             'code':code
         }
         user_token_req = requests.post(USER_AUTH_TOKEN_URL,data=data,headers=headers)
-        print(user_token_req.json()["access_token"])
+        print(user_token_req.json())
     except Exception as e:
         print(e)
 
