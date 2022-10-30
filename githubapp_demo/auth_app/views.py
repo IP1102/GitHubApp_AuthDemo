@@ -2,7 +2,9 @@ from django.shortcuts import render
 from django.http import JsonResponse
 import json, requests
 from rest_framework.decorators import api_view
-from .constants import USER_AUTH_TOKEN_URL,CLIENT_ID,CLIENT_SECRET,PEM_FILEPATH,APP_ACCESS_TOKEN_URL,APP_INSTALLATIONS_URL,REPO_PULLS_URL
+from .constants import (
+    USER_AUTH_TOKEN_URL,CLIENT_ID,CLIENT_SECRET,PEM_FILEPATH,APP_ACCESS_TOKEN_URL,APP_INSTALLATIONS_URL,REPO_PULLS_URL
+)
 from .jwtapptoken import GetJwtToken
 
 # Create your views here.
@@ -22,6 +24,12 @@ def home(request):
         }
         user_token_req = requests.post(USER_AUTH_TOKEN_URL,data=data,headers=headers)
         print(user_token_req.json())
+        headers={
+            'accept':'application/json',
+            'Authorization': 'Bearer '+user_token_req.json()["access_token"]
+        }
+        user_details = requests.get('https://api.github.com/user',headers=headers)
+        print(user_details.json())
     except Exception as e:
         print(e)
 
@@ -61,3 +69,8 @@ def pr(request):
     print(pr_repo.json())
 
     return JsonResponse(pr_repo.json(),safe=False)
+
+def testget(request):
+    j=json.loads(request.body)
+    print(j["key"])
+    return JsonResponse({'message':'Success'})
